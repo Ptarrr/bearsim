@@ -31,8 +31,8 @@ var Boss =
          sim.log(t + " Boss hit : " + Boss.damage + ":" + dam) ;
          Bear.dtaken += dam ;
 
-         var v_add = Boss.damage * 0.02 ;
-         var v_min = v_add * 10 / 1.5 ;
+         var v_add = Boss.damage * 0.018 ;
+         var v_min = v_add * 10 / Boss.swing ;
          Bear.vengeance = Math.max(v_min, Bear.vengeance * (Bear.v_time - t) / 20 + v_add) ;
          Bear.v_time = t+20 ;
       }      
@@ -62,9 +62,8 @@ var Boss =
          sim.log(t + " Boss bleed tick : " + dam) ;
          Bear.dtaken += dam ;
 
-         var v_add = Boss.bleed_damage * 0.05 ;
-         var v_min = v_add * 10 / 1.5 ;
-         Bear.vengeance = Math.max(v_min, Bear.vengeance * (Bear.v_time - t) / 20 + v_add) ;
+         var v_add = Boss.bleed_damage * 0.045 ;
+         Bear.vengeance = Bear.vengeance * (Bear.v_time - t) / 20 + v_add ;
          Bear.v_time = t+20 ;
       }      
       sim.queue(t+1, Boss.bleed_tick) ;
