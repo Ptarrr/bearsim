@@ -109,8 +109,7 @@ var Strat = {
 
    init:function() {
       Bear.FR_effective = 0.9 ;
-      //Bear.spend = Strat.sd_with_FR_when_no_charges ;
-      Bear.spend = Strat.fr_only ;
+      Bear.spend = Strat.sd_with_FR_when_no_charges ;
       Bear.special = Strat.simple_rotation ;
    }
 } ;
