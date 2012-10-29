@@ -1,21 +1,28 @@
+// The mechanics of the simulator
+// It is a very dumb, event-based simulation
+// You queue events that are a JS function and a time and the sim simply execute
+// the next event in time, until it encounters the special "bossdead" event.
+
+// Initialize the sim for a new fight
 function initSim()
 {
    var sim = new Object();
    sim.end = {time:100000} ;
-   sim.bossdead = {time:60*(5+Math.random())} ;
+   sim.bossdead = {time:60*(5+Math.random())} ; // Boss dies after 5-6 minutes
    sim.events = [ {time:-1, run:Bear.prepare}, sim.bossdead, sim.end] ;
-   sim.log_text = "" ;
-   //sim.log = function(l) { this.log_text += "<br/>" + l ; } ;
-   sim.log = function(l) { } ;
+   sim.log_text = "" ; // reset the log
+   //sim.log = function(l) { this.log_text += "<br/>" + l ; } ; // active log function
+   sim.log = function(l) { } ; // no-op log function
    sim.queue = function(t,f)
    {
       var i = 0 ;
-      while (sim.events[i].time < t) i++ ;
-      sim.events.splice(i,0,{time:t, run:f}) ;
+      while (sim.events[i].time < t) i++ ; // find the place where to insert the event
+      sim.events.splice(i,0,{time:t, run:f}) ; // insert the event
    } ;
    return sim ;
 }
 
+// run the sim
 function runSim(sim)
 {
    var e = sim.events.shift() ;
@@ -27,6 +34,7 @@ function runSim(sim)
    return e.time ;
 }
 
+// run the sim many times and calculate statistics
 function runSimManyTimes(iterations)
 {
    var sim = initSim();

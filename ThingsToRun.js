@@ -1,3 +1,5 @@
+// This file defines what simulations to run
+
 function simOnLoad()
 {
    Strat.init() ;

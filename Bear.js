@@ -1,58 +1,68 @@
 var Bear =
 {
-   agi:		0,
-   haste:	0,
-   mastery: 0,
-   arm:		0,
+   agi:     0, // buffed Agility
+   haste:   0, // buffed haste as a multiplier - e.g. 1.124 is 12.4% haste
+   mastery: 0, // buffed mastery 
+   arm:     0, // armor in Bear form
+   dr:      0, // physical damage reduction granted by armor
 
-   dtaken:  0,
+   critA:   0,      // chance to crit on attack - 0.23 means 23% crit
+   missA:   0,      // chance to miss on attack
+   dodgeA:  0,      // chance to be dodged by the boss
+   parryA:  0,      // chance to be parried by the boss
+   blockA:  0.075,  // chance to be blocked by the boss
+   glanceA: 0.24,   // chance to have a glancing hit
 
-   critA:	0,
-   missA:	0,
-   dodgeA:	0,
-   parryA:	0,
-   blockA:	0.075,
-   glanceA:	0.24,
-
-   critAT:	0,
-   missAT:	0,
-   dodgeAT:	0,
-   parryAT:	0,
-   blockAT:	0,
+   // AT = attack table, this is used to resolve the single-roll system
+   missAT:  0,
+   dodgeAT: 0,
+   parryAT: 0,
    glanceAT:0,
+   critAT:  0,  // crit on the attack table - only use this for white attacks
 
-   missS:	0,
-   critS:	0,
+   // S = spell
+   missS:   0,  // spell miss chance - used for FF
+   critS:   0,  // spell crit chance - used for FF
 
-   missD:	0,
-   dodgeD:	0,
-   parryD:	0,
+   // D = defense
+   missD:   0,  // chance to be missed by the boss - always 0 for raid bosses
+   dodgeD:  0,  // chance to dodge the boss
+   parryD:  0,  // chance to parry the boss - always 0 for Bears
 
-   rage:			0,
-   tr:         0,
-   vengeance:	0,
-   v_time:     0,
-   charges:		0,
-   dr:			0,
-   swing:		2.5,
-   gcd_melee:	1.5,
-   gcd_spell:	1.5,
-   sd_time:		0,
-   sd_downtime:0,
+   // speed
+   swing:      2.5,  // auto-attack swing speed
+   gcd_melee:  1.5,  // gcd for melee attacks - always 1.5
+   gcd_spell:  1.5,  // gcd for spells (FF)
 
-   mangle_cd:	0,
+   // Variables
+   rage:       0,    // current rage
+   vengeance:  0,    // current vengeance
+   charges:    0,    // current number of SD charges
+
+   // Cooldowns for abilities
+   mangle_cd:  0,
    lacerate_cd:0,
-   fff_cd:		0,
-   trash_cd:	0,
-   enrage_cd:	0,
+   fff_cd:     0,
+   trash_cd:   0,
+   enrage_cd:  0,
 
-   trash_time:    0,
-   lacerate_time: 0,
-   weaken_time:   0,
+   // Duration of buffs & debuffs
+   trash_time:    0, // time when trash DoT will expire - for dps
+   lacerate_time: 0, // time when lacerate DoT will expire - for dps
+   weaken_time:   0, // time when the weaken debuff (phy damage done) will expire
+   v_time:        0, // time when vengeance will expire
+   sd_time:       0, // time when SD will expire
 
-   min_left:0,
-   heal:0, healn:0,
+   // Statistics
+   dtaken:      0, // total damage taken
+   hdone:       0, // total healing done
+   sd_downtime: 0, // downtime of SD
+   tr:          0, // total rage gained
+   healn:       0, // number of heals
+   heal:        0, // healing as if all FRs where at 60 rage (to calculate the average heal strength)
 
+   // Called at the beginning of each fight simulation.
+   // This initializes all variables and queues the actions
    init:function(sim, t) {
       sim.log("Bear init");
       Bear.haste = 1 + Stats.HasteRating * 1.5 / 42500 ;
@@ -95,6 +105,10 @@ var Bear =
       // Bear.blockAT  = Bear.glanceAT + Bear.blockA; // block is 2nd roll
       Bear.critAT   = Bear.glanceAT + Bear.critA;
 
+      // spell miss - it's not clear whether expertise beyond 7.5% can reduce it further, assume yes
+      Bear.missS = Math.max(0, 0.15 - Stats.HitRating / 34000 - Stats.ExpRating / 34000) ;
+      // Bear.critS = // spell crit - only needed for dps, not done yet
+
       Bear.charges = 3 ;
       Bear.sd_time = 0 ;
       Bear.rage = 40; // Supposes that Enrage was used
@@ -119,6 +133,7 @@ var Bear =
       sim.queue(0,Bear.special);
    },
 
+   // Bear auto-attack
    hit:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " miss") ;
@@ -139,6 +154,8 @@ var Bear =
       sim.queue(t+0.1, Bear.spend) ;
    },
 
+   // Now come the functions that execute abilities
+
    Mangle:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " Mangle miss") ;
@@ -148,7 +165,7 @@ var Bear =
          Bear.rage += 5 ;
          Bear.tr += 5 ;
          var c = Math.random() ;
-         if (c < Bear.critA) { // critA, not the table
+         if (c < Bear.critA) { // critA, not the table cos yellow hits are 2-roll
             sim.log(t + " Mangle crit") ;
             Bear.rage += 15 ;
             Bear.tr += 15 ;
@@ -189,7 +206,7 @@ var Bear =
 
    FFF:function(sim, t) {
       var r = Math.random() ;
-      if (r < Bear.dodgeAT) sim.log(t + " FFF miss") ;
+      if (r < Bear.missS) sim.log(t + " FFF miss") ;
       else {
          if (Math.random() < 0.25) Bear.mangle_cd = 0 ;
          /* DPS calculation
@@ -232,6 +249,9 @@ var Bear =
       sim.queue(t+Bear.gcd, Bear.special) ;
    },
 
+   // = = =   And a few periodic things   = = =
+
+   // Enrage ticks that generate rage
    Enrage_tick:function(sim, t) {
       Bear.rage += 1 ;
       Bear.tr += 1 ;
@@ -240,6 +260,7 @@ var Bear =
       if (Bear.enrage_ticks > 0) sim.queue(t+1, Bear.Enrage_tick) ;
    },
 
+   // SD recharge "ticks"
    recharge:function(sim, t) {
       Bear.charges++ ;
       if (Bear.charges < 3) sim.queue(t+9, Bear.recharge) ;
