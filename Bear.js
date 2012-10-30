@@ -250,6 +250,36 @@ var Bear =
       sim.queue(t+Bear.gcd, Bear.special) ;
    },
 
+   // = = =   Rage spenders   = = =
+
+   SavageDefense:function(sim, t) {
+      // this should already have been verified by the strategy before calling us:
+      // if (Bear.rage > 60 && Bear.charges > 0)
+      {
+         if (Bear.sd_time > t)
+            Bear.sd_time += 6 ;
+         else {
+            Bear.sd_downtime += t - Bear.sd_time ;
+            Bear.sd_time = t+6 ;
+         }
+
+         if (Bear.charges == 3) sim.queue(t+9, Bear.recharge) ;
+         Bear.charges-- ;
+         Bear.rage -= 60;
+      }
+   },
+
+   FrenziedRegeneration:function(sim, t) {
+      // simplefied - ignoring the AP from strength, procs etc
+      var heal = (Bear.vengeance*1.1 + Bear.agi*0.2) * 2 ;
+      var rage_used = Math.min(60, Bear.rage) ;
+      Bear.heal += heal ; Bear.healn += 1 ;
+      var fr_heal = heal * rage_used / 60 ;
+      Bear.dtaken -= fr_heal * Bear.FR_effective ;
+      Bear.rage -= rage_used ;
+      sim.log(t + " FR healing for " + fr_heal) ;
+   },
+
    // = = =   And a few periodic things   = = =
 
    // Enrage ticks that generate rage
@@ -265,6 +295,44 @@ var Bear =
    recharge:function(sim, t) {
       Bear.charges++ ;
       if (Bear.charges < 3) sim.queue(t+9, Bear.recharge) ;
+   },
+
+   // = = =   Helper methods   = = =
+
+   addVengeanceMelee:function(sim, t, unmitDamage, swingtimer) {
+      var v_add = unmitDamage * 0.018 ;
+      var v_min = v_add * 10 / swingtimer ;
+      Bear.vengeance = Math.max(v_min, Bear.vengeance * (Bear.v_time - t) / 20 + v_add) ;
+      Bear.v_time = t+20 ;
+   },
+
+   addVengeanceSpecialMagic:function(sim, t, unmitDamage) {
+      var v_add = unmitDamage * 0.045 ;
+      if (Bear.v_time > t)
+         Bear.vengeance = Bear.vengeance * (Bear.v_time - t) / 20 + v_add ;
+      else // Vengeance expired
+         Bear.vengeance = v_add ;
+      Bear.v_time = t+20 ;
+   },
+
+   // Bleed = physical, but not mitigated by armor
+   addVengeanceSpecialBleed:function(sim, t, unmitDamage) {
+      var v_add = unmitDamage * 0.045 ;
+      if (Bear.v_time > t)
+         Bear.vengeance = Bear.vengeance * (Bear.v_time - t) / 20 + v_add ;
+      else // Vengeance expired
+         Bear.vengeance = v_add ;
+      Bear.v_time = t+20 ;
+   },
+
+   // For Physical special attacks that ARE mitigated by armor
+   addVengeanceSpecialPhysical:function(sim, t, unmitDamage) {
+      var v_add = unmitDamage * 0.018 ;
+      if (Bear.v_time > t)
+         Bear.vengeance = Bear.vengeance * (Bear.v_time - t) / 20 + v_add ;
+      else // Vengeance expired
+         Bear.vengeance = v_add ;
+      Bear.v_time = t+20 ;
    },
 
 } ;

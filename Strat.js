@@ -61,15 +61,7 @@ var Strat = {
    sd_only:function(sim, t) {
       if (Bear.rage > 60 && Bear.charges > 0)
       {
-         if (Bear.sd_time > t)
-            Bear.sd_time += 6;
-         else {
-            Bear.sd_downtime += t - Bear.sd_time;
-            Bear.sd_time = t+6 ;
-         } ;
-         if (Bear.charges == 3) sim.queue(t+9, Bear.recharge) ;
-         Bear.charges-- ;
-         Bear.rage -= 60;
+         Bear.SavageDefense(sim, t) ;
       }
       if (Bear.rage < 60 && Bear.charges > 0 && Bear.sd_time < t)
       {
@@ -82,15 +74,7 @@ var Strat = {
    sd_with_FR_when_no_charges:function(sim, t) {
       if (Bear.rage > 60 && Bear.charges > 0)
       {
-         if (Bear.sd_time > t)
-            Bear.sd_time += 6;
-         else {
-            Bear.sd_downtime += t - Bear.sd_time;
-            Bear.sd_time = t+6 ;
-         } ;
-         if (Bear.charges == 3) sim.queue(t+9, Bear.recharge) ;
-         Bear.charges-- ;
-         Bear.rage -= 60;
+         Bear.SavageDefense(sim, t) ;
       }
       if (Bear.rage < 60 && Bear.charges > 0 && Bear.sd_time < t)
       {
@@ -98,26 +82,14 @@ var Strat = {
       }
       if (Bear.charges == 0 && Bear.sd_time >= t+4)
       {
-         // simplefied - ignoring the max 60 rage used
-         var heal = (Bear.vengeance*1.1 + Bear.agi*0.2) * 2 ;
-         Bear.heal += heal ; Bear.healn += 1 ;
-         var fr_heal = heal * Bear.rage / 60 ;
-         Bear.dtaken -= fr_heal * Bear.FR_effective ;
-         Bear.rage = 0 ;
-         sim.log(t + " FR healing for " + fr_heal) ;
+         Bear.FrenziedRegeneration(sim, t) ;
       }
    },
 
 
    // Always use FR
    fr_only:function(sim, t) {
-      // simplefied - ignoring the max 60 rage used
-      var heal = (Bear.vengeance*1.1 + Bear.agi*0.2) * 2 ;
-      Bear.heal += heal ; Bear.healn += 1 ;
-      var fr_heal = heal * Bear.rage / 60 ;
-      Bear.dtaken -= fr_heal * Bear.FR_effective ;
-      Bear.rage = 0 ;
-      sim.log(t + " FR healing for " + fr_heal) ;
+      Bear.FrenziedRegeneration(sim, t) ;
    },
 
 
@@ -125,13 +97,7 @@ var Strat = {
    sd_ignoring_charges:function(sim, t) {
       if (Bear.rage > 60)
       {
-         if (Bear.sd_time > t)
-            Bear.sd_time += 6;
-         else {
-            Bear.sd_downtime += t - Bear.sd_time;
-            Bear.sd_time = t+6 ;
-         } ;
-         Bear.rage -= 60;
+         Bear.SavageDefense(sim, t) ;
       }
    },
 } ;
