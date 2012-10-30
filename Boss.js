@@ -31,7 +31,7 @@ var Boss =
       var d = Bear.dodgeD + ((Bear.sd_time >= t) ? Stats.SD_Dodge : 0) ;
       if (r < d) {
          sim.log(t + " Boss hit dodged") ;
-         if (Bear.v_time >= t) Bear.v_time = t+20 ;
+         Bear.addVengeanceMelee(sim, t, Boss.damage, Boss.swing) ;
       } else {
          var dam = Boss.damage * (1 - Bear.dr) * (1 - 0.12) ;
          if (Bear.weaken_time <= t) dam = dam * 0.9 ;
@@ -51,7 +51,6 @@ var Boss =
       var d = Bear.dodgeD + ((Bear.sd_time >= t) ? Stats.SD_Dodge : 0) ;
       if (r < d) {
          sim.log(t + " Boss bleed dodged") ;
-         if (Bear.v_time >= t) Bear.v_time = t+20 ;
       } else {
          var dam = Boss.bleed_damage * (1 - 0.12) ;
          if (Bear.weaken_time <= t) dam = dam * 0.9 ;
