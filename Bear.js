@@ -86,7 +86,7 @@ var Bear =
          Bear.parryA = 0.075 ;
       }
 
-      Bear.critA = 0.074755 + Bear.agi / 125951.806640625 + Stats.CritRating * 1.5 / 60000 - 0.03 ;
+      Bear.critA = 0.074755 + Bear.agi / 125951.806640625 + Stats.CritRating * 1.5 / 60000 + 0.05 - 0.03 ;
       // TODO: + Worgen
 
       var d_k = 1.222 ;
