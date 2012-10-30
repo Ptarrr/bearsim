@@ -51,15 +51,23 @@ function runSimManyTimes(iterations)
       sim.bossdead.time = 60*(5+Math.random()) ;
       sim.events = [ {time:-1, run:Bear.init}, {time:-1, run:Boss.init}, sim.bossdead, sim.end] ;
       var time = runSim(sim);
+
+      // Add SD downtime at the end of the fight
+      if (Bear.sd_time < time) Bear.sd_downtime += time - Bear.sd_time ;
       var uptime = 100 * (time - Bear.sd_downtime) / time ;
       uptimes.push(uptime) ;
       upt += uptime ;
+
+      // Calculate DTPS
       var dtps = Bear.dtaken / time ;
       dt += dtps ;
+      damage_taken.push(dtps) ;
+
+      // Calculate average RPS
       var rps = Bear.tr / time ;
       rps_sum += rps ;
       rpss.push(rps) ;
-      damage_taken.push(dtps) ;
+
       times.push(time) ;
    }
 
