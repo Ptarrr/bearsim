@@ -72,7 +72,8 @@ var Bear =
 
       Bear.agi = 1.05 * (Stats.Agility + 90) ;
       Bear.mastery = 5 + 8 + Stats.MasteryRating / 600 ;
-      Bear.arm = (Stats.Armor * 4.3 + Stats.BonusArmor) * (1 + .0125 * Bear.mastery) ;
+      var ArmorFromLeatherNCloth = Stats.Armor - Stats.BonusArmor ; 
+      Bear.arm = (ArmorFromLeatherNCloth * 4.3 + Stats.BonusArmor) * (1 + .0125 * Bear.mastery) ;
       Bear.dr = Bear.arm / (Bear.arm + 4037.5 * 93 - 317117.5) ;
 
       Bear.missA = Math.max(0, 0.075 - Stats.HitRating / 34000) ;

@@ -37,9 +37,11 @@ function simOnLoad()
    Stats.ExpRating -= 2000 ;
 
    Stats.BonusArmor += 2250 ;
+   Stats.Armor += 2250 ;
    Stats.MasteryRating += 750 ;
    document.getElementById("result").innerHTML+="<br/>Elixirs: 2250 Armor + 750 Mastery<br/>" + runSimManyTimes(1000);
    Stats.BonusArmor -= 2250 ;
+   Stats.Armor -= 2250 ;
    Stats.MasteryRating -= 750 ;
 
 }
