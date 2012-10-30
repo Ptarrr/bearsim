@@ -86,12 +86,12 @@ function runSimManyTimes(iterations)
       times.push(time) ;
    }
 
-   uptimes.sort() ;
-   times.sort() ;
-   damage_taken.sort() ;
-   rpss.sort() ;
-   healing_done.sort() ;
-   eff_damage_taken.sort() ;
+   uptimes.sort(function(a,b){return a-b}) ;
+   times.sort(function(a,b){return a-b}) ;
+   damage_taken.sort(function(a,b){return a-b}) ;
+   rpss.sort(function(a,b){return a-b}) ;
+   healing_done.sort(function(a,b){return a-b}) ;
+   eff_damage_taken.sort(function(a,b){return a-b}) ;
 
    var sd_text = "SD Uptimes average (5%, median, 95%) : " + (upt / iterations) + " ( " + uptimes[Math.floor(iterations*0.05)] + " , " + uptimes[Math.floor(iterations*0.5)] + " , " + uptimes[Math.floor(iterations*0.95)] + " ) " ;
    var dt_text = "DTPS average (5%, median, 95%) : " + (dt / iterations) + " ( " + damage_taken[Math.floor(iterations*0.05)] + " , " + damage_taken[Math.floor(iterations*0.5)] + " , " + damage_taken[Math.floor(iterations*0.95)] + " ) " ;
