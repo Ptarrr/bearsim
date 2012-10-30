@@ -45,6 +45,10 @@ function runSimManyTimes(iterations)
    var dt = 0 ;
    var rpss = new Array() ;
    var rps_sum = 0 ;
+   var healing_done = new Array() ;
+   var ht = 0 ;
+   var eff_damage_taken = new Array() ;
+   var edt = 0 ;
 
    for (var i=0; i<iterations; ++i)
    {
@@ -63,6 +67,17 @@ function runSimManyTimes(iterations)
       dt += dtps ;
       damage_taken.push(dtps) ;
 
+      // Calculate HPS
+      var hps = Bear.hdone / time ;
+      ht += hps ;
+      healing_done.push(hps) ;
+
+      // Calculate EDTPS
+      var edtps = (Bear.dtaken - Bear.hdone * Bear.FR_effective) / time ;
+      edt += edtps ;
+      eff_damage_taken.push(edtps) ;
+
+
       // Calculate average RPS
       var rps = Bear.tr / time ;
       rps_sum += rps ;
@@ -75,11 +90,15 @@ function runSimManyTimes(iterations)
    times.sort() ;
    damage_taken.sort() ;
    rpss.sort() ;
+   healing_done.sort() ;
+   eff_damage_taken.sort() ;
 
    var sd_text = "SD Uptimes average (5%, median, 95%) : " + (upt / iterations) + " ( " + uptimes[Math.floor(iterations*0.05)] + " , " + uptimes[Math.floor(iterations*0.5)] + " , " + uptimes[Math.floor(iterations*0.95)] + " ) " ;
    var dt_text = "DTPS average (5%, median, 95%) : " + (dt / iterations) + " ( " + damage_taken[Math.floor(iterations*0.05)] + " , " + damage_taken[Math.floor(iterations*0.5)] + " , " + damage_taken[Math.floor(iterations*0.95)] + " ) " ;
+   var hd_text = "HPS average (5%, median, 95%) : " + (ht / iterations) + " ( " + healing_done[Math.floor(iterations*0.05)] + " , " + healing_done[Math.floor(iterations*0.5)] + " , " + healing_done[Math.floor(iterations*0.95)] + " ) " ;
+   var edt_text = "EDTPS average (5%, median, 95%) : " + (edt / iterations) + " ( " + eff_damage_taken[Math.floor(iterations*0.05)] + " , " + eff_damage_taken[Math.floor(iterations*0.5)] + " , " + eff_damage_taken[Math.floor(iterations*0.95)] + " ) " ;
    var rps_text = "RPS average (5%, median, 95%) : " + (rps_sum / iterations) + " ( " + rpss[Math.floor(iterations*0.05)] + " , " + rpss[Math.floor(iterations*0.5)] + " , " + rpss[Math.floor(iterations*0.95)] + " ) " ;
 
-   return sd_text + "<br/>" + dt_text + "<br/>" + rps_text + "<br/>" ;
+   return sd_text + "<br/>" + dt_text + "<br/>" + hd_text + "<br/>" + edt_text + "<br/>" + rps_text + "<br/>" ;
 }
 

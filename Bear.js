@@ -127,6 +127,7 @@ var Bear =
 
       Bear.step = 1 ;
       Bear.dtaken = 0 ;
+      Bear.hdone = 0 ;
       Bear.vengeance = 0 ;
       Bear.v_time = 0 ;
 
@@ -275,7 +276,7 @@ var Bear =
       var rage_used = Math.min(60, Bear.rage) ;
       Bear.heal += heal ; Bear.healn += 1 ;
       var fr_heal = heal * rage_used / 60 ;
-      Bear.dtaken -= fr_heal * Bear.FR_effective ;
+      Bear.hdone += fr_heal ;
       Bear.rage -= rage_used ;
       sim.log(t + " FR healing for " + fr_heal) ;
    },
