@@ -68,7 +68,7 @@ var Bear =
       Bear.haste = 1 + Stats.HasteRating * 1.5 / 42500 ;
       Bear.swing = 2.5 / (1.1 * Bear.haste) ;
       Bear.gcd_melee = 1.5 ;
-      Bear.gcd_spell = 1.5 / Bear.haste ;
+      Bear.gcd_spell = 1.5 / Bear.haste / 1.05 ;
 
       Bear.agi = 1.05 * (Stats.Agility + 90) ;
       Bear.mastery = 5 + 8 + Stats.MasteryRating / 600 ;
