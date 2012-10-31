@@ -248,7 +248,7 @@ var Bear =
       Bear.enrage_cd = t+60 ;
       Bear.enrage_ticks = 10 ;
       sim.queue(t+1, Bear.Enrage_tick) ;
-      sim.queue(t+Bear.gcd, Bear.special) ;
+      sim.queue(t+Bear.gcd_melee, Bear.special) ;
    },
 
    // = = =   Rage spenders   = = =
