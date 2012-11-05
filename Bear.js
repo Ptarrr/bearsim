@@ -70,7 +70,7 @@ var Bear =
       Bear.gcd_melee = 1.5 ;
       Bear.gcd_spell = 1.5 / Bear.haste / 1.05 ;
 
-      Bear.agi = 1.05 * (Stats.Agility + 90) ;
+      Bear.agi = 1.05 * (Stats.Agility + 300) ;
       Bear.mastery = 5 + 8 + Stats.MasteryRating / 600 ;
       var ArmorFromLeatherNCloth = Stats.Armor - Stats.BonusArmor ; 
       Bear.arm = (ArmorFromLeatherNCloth * 4.3 + Stats.BonusArmor) * (1 + .0125 * Bear.mastery) ;
@@ -131,15 +131,24 @@ var Bear =
       Bear.vengeance = 0 ;
       Bear.v_time = 0 ;
 
+      Bear.lastproc = -10 ;
+
       sim.queue(0,Bear.hit);
       sim.queue(0,Bear.special);
    },
+
+   procAATry:function(sim,t){},
+   procAAHit:function(sim,t){},
+   procMeleeTry:function(sim,t){},
+   procMeleeHit:function(sim,t){},
+   procSpellTry:function(sim,t){},
+   procSpellHit:function(sim,t){},
 
    // Bear auto-attack
    hit:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " miss") ;
-      else if (r < Bear.dodgeAT) sim.log(t + " dodge") ;
+      else {if (r < Bear.dodgeAT) sim.log(t + " dodge") ;
       else if (r < Bear.parryAT) sim.log(t + " parry") ;
       else {
          Bear.rage += 6.25*1.75 ;
@@ -151,7 +160,10 @@ var Bear =
             Bear.tr += 15 ;
          } else sim.log(t + " hit") ;
          if (Bear.rage > 100) Bear.rage = 100 ;
+
+         Bear.procAAHit(sim, t) ;
       }
+      Bear.procAATry(sim, t) ;}
       sim.queue(t+Bear.swing, Bear.hit) ;
       sim.queue(t+0.1, Bear.spend) ;
    },
@@ -161,7 +173,7 @@ var Bear =
    Mangle:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " Mangle miss") ;
-      else if (r < Bear.dodgeAT) sim.log(t + " Mangle dodge") ;
+      else {if (r < Bear.dodgeAT) sim.log(t + " Mangle dodge") ;
       else if (r < Bear.parryAT) sim.log(t + " Mangle parry") ;
       else {
          Bear.rage += 5 ;
@@ -173,7 +185,10 @@ var Bear =
             Bear.tr += 15 ;
          } else sim.log(t + " Mangle hit") ;
          if (Bear.rage > 100) Bear.rage = 100 ;
+
+         Bear.procMeleeHit(sim, t) ;
       }
+      Bear.procMeleeTry(sim, t) ;}
       Bear.mangle_cd = t + 6 ;
       sim.queue(t+Bear.gcd_melee, Bear.special) ;
       sim.queue(t+0.1, Bear.spend) ;
@@ -182,7 +197,7 @@ var Bear =
    Trash:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " Trash miss") ;
-      else if (r < Bear.dodgeAT) sim.log(t + " Trash dodge") ;
+      else {if (r < Bear.dodgeAT) sim.log(t + " Trash dodge") ;
       else if (r < Bear.parryAT) sim.log(t + " Trash parry") ;
       else {
          if (Math.random() < 0.25) Bear.mangle_cd = 0 ;
@@ -201,7 +216,10 @@ var Bear =
          } else sim.log(t + " Trash hit") ;
          */
          sim.log(t + " Trash hit") ;
+
+         Bear.procMeleeHit(sim, t) ;
       }
+      Bear.procMeleeTry(sim, t) ;}
       Bear.trash_cd = t + 6 ;
       sim.queue(t+Bear.gcd_melee, Bear.special) ;
    },
@@ -217,6 +235,9 @@ var Bear =
             sim.log(t + " FFF crit") ;
          } else
          */ sim.log(t + " FFF hit") ;
+
+         Bear.procSpellHit(sim, t) ;
+         Bear.procSpellTry(sim, t) ;
       }
       Bear.fff_cd = t + 6 ;
       sim.queue(t+Bear.gcd_spell, Bear.special) ;
@@ -225,7 +246,7 @@ var Bear =
    Lacerate:function(sim, t) {
       var r = Math.random() ;
       if (r < Bear.missAT) sim.log(t + " Lacerate miss") ;
-      else if (r < Bear.dodgeAT) sim.log(t + " Lacerate dodge") ;
+      else {if (r < Bear.dodgeAT) sim.log(t + " Lacerate dodge") ;
       else if (r < Bear.parryAT) sim.log(t + " Lacerate parry") ;
       else {
          if (Math.random() < 0.25) Bear.mangle_cd = 0 ;
@@ -236,7 +257,10 @@ var Bear =
             sim.log(t + " Lacerate crit") ;
          } else
          */ sim.log(t + " Lacerate hit") ;
+
+         Bear.procMeleeHit(sim, t) ;
       }
+      Bear.procMeleeTry(sim, t) ;}
       Bear.lacerate_cd = t + 3 ;
       sim.queue(t+Bear.gcd_melee, Bear.special) ;
    },

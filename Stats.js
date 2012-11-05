@@ -6,11 +6,11 @@ var Stats = {
    Strength:      180,
    Stamina:       17292,
    CritRating:    6760,
-   HasteRating:   621+600,
+   HasteRating:   621,
    MasteryRating: 3765,
    DodgeRating:   600,
    HitRating:     2560,
-   ExpRating:     3550-600, // WARNING: if this is over 3000, the stat value for 2k expertise will be wrong
+   ExpRating:     3550, // WARNING: if this is over 3000, the stat value for 2k expertise will be wrong
    BonusArmor:    0,  // do NOT forget to also increase total armor if you increase this
 
    SD_Dodge:      0.45, // change this to 0.50 if you have 4pc T14
