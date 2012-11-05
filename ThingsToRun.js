@@ -75,6 +75,7 @@ function windsong(sim, t)
 {
    var r = Math.random() ;
    var tt = Math.min(10, t-Bear.lastproc) ;
+   Bear.lastproc = t ;
    if (r < 2 * Bear.haste * 1.1 * tt / 60)
    {
       var r2 = 3*Math.random() ;
@@ -89,16 +90,16 @@ function windsong(sim, t)
       }
       else if (r2 < 2)
       {
-         Bear.critA  = Bear.critA_N ;
+         Bear.critA  = Bear.critA_WS ;
          Bear.critAT = Bear.glanceAT + Bear.critA ;
          Bear.wsc_t = t+12 ;
          sim.queue(Bear.wsc_t, windsong_crit_expires) ;
       }
       else
       {
-         Bear.mastery = Bear.masteryN ;
-         Bear.arm     = Bear.armN ;
-         Bear.dr      = Bear.drN ;
+         Bear.mastery = Bear.masteryWS ;
+         Bear.arm     = Bear.armWS ;
+         Bear.dr      = Bear.drWS ;
          Bear.wsm_t   = t+12 ;
          sim.queue(Bear.wsm_t, windsong_mastery_expires) ;
       }
